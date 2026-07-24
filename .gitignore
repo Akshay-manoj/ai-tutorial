@@ -70,6 +70,9 @@ web_modules/
 .env.*
 !.env.example
 
+# Generated vector store (Phase 2)
+data/vector_store.json
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

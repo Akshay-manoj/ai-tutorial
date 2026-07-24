@@ -1,0 +1,25 @@
+{
+  "name": "ai-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "smoke": "node src/smoke-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akshay-manoj/ai-tutorial.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Akshay-manoj/ai-tutorial/issues"
+  },
+  "homepage": "https://github.com/Akshay-manoj/ai-tutorial#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "openai": "^6.49.0"
+  }
+}
