@@ -24,22 +24,16 @@ while (true) {
         stream: true,
     });
 
-    process.stdout.write("assistant>");
+    process.stdout.write("assistant> ");
     let reply = "";
     for await (const chunk of stream) {
-        console.log("chunk", chunk.choices[0]?.delta);
+        const delta = chunk.choices[0]?.delta?.content ?? "";
+        reply += delta;
+        process.stdout.write(delta);
     }
+    process.stdout.write("\n\n");
 
-    //   process.stdout.write("assistant> ");
-    //   let reply = "";
-    //   for await (const chunk of stream) {
-    //     const delta = chunk.choices[0]?.delta?.content ?? "";
-    //     reply += delta;
-    //     process.stdout.write(delta);
-    //   }
-    //   process.stdout.write("\n\n");
-
-    //   messages.push({ role: "assistant", content: reply });
+    messages.push({ role: "assistant", content: reply });
 }
 
 rl.close();
