@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "smoke": "node src/smoke-test.js"
+    "smoke": "node src/smoke-test.js",
+    "chat": "node src/01-chat-client/chat.js"
   },
   "repository": {
     "type": "git",

@@ -17,6 +17,7 @@ Build this yourself, one phase at a time. Each phase has a clear goal, folder la
 | 4 | Tool-calling agent | ~1–2 days | Phase 2 |
 | 5 | Local-only stack (optional) | ~1 day | Phase 2 |
 
+
 ---
 
 ## Phase 0 — Environment Setup
@@ -95,13 +96,25 @@ Add to `package.json`:
 { "type": "module" }
 ```
 
-**Done when:** A one-liner script calls the model and prints a response:
+**Done when:** A one-liner script calls the model and prints a response.
+
+**Run:**
 
 ```bash
-node -e "import('./src/client.js').then(async ({getClient}) => { ... })"
+# Copy env and fill in your key (or leave unset for Ollama)
+cp .env.example .env
+
+# If using Ollama — start the daemon and pull models first
+ollama serve   # if not already running
+ollama pull llama3.2
+ollama pull nomic-embed-text
+
+# Smoke-test the client
+npm run smoke
+# or: node src/smoke-test.js
 ```
 
-Or a tiny `src/smoke-test.js` you run with `node src/smoke-test.js`.
+Expected: prints the backend name, model, and a short reply (e.g. `smoke ok`).
 
 ---
 
@@ -145,6 +158,20 @@ for await (const chunk of stream) {
   "chat": "node src/01-chat-client/chat.js"
 }
 ```
+
+**Run:**
+
+```bash
+# Interactive chat (Ctrl+C to exit)
+npm run chat
+# or: node src/01-chat-client/chat.js
+
+# With temperature
+npm run chat -- --temperature 0.7
+# or: node src/01-chat-client/chat.js --temperature 0.7
+```
+
+Type a few messages, confirm replies stream token-by-token, and that history carries across turns.
 
 **Concepts to study as you build:**
 
@@ -244,13 +271,6 @@ for each .md/.txt in sample_docs/
 await store.save()
 ```
 
-**Run:**
-
-```bash
-node src/02-rag/ingest.js
-node src/02-rag/ingest.js --chunk-size 500 --overlap 50
-```
-
 Parse flags with `process.argv` or add `minimist` (`npm install minimist`).
 
 ### Step 2e — Query Pipeline (`query.js`)
@@ -288,6 +308,24 @@ flowchart LR
   "query": "node src/02-rag/query.js"
 }
 ```
+
+**Run:**
+
+```bash
+# 1. Put 3–5 .md/.txt files in sample_docs/ (see below)
+
+# 2. Ingest — embeds docs into data/vector_store.json
+npm run ingest
+# or: node src/02-rag/ingest.js
+# with flags:
+npm run ingest -- --chunk-size 500 --overlap 50
+
+# 3. Query — pass a question as an argument (or make it interactive)
+npm run query -- "What is chunk overlap?"
+# or: node src/02-rag/query.js "What is chunk overlap?"
+```
+
+Expected: retrieved chunks + scores printed first, then a streamed answer with source citations.
 
 **Done when:** You ask "What is chunk overlap?" and get an answer grounded in your docs with source citations.
 
@@ -334,11 +372,33 @@ console.log(`Hit rate: ${hits}/${questions.length}`);
 
 **Target:** 8–10/10 with default settings.
 
-**Then manually check answer faithfulness:**
+**Add npm script:**
 
-- Run `node src/02-rag/query.js "..."` for each question
-- Does the answer match the retrieved chunks?
-- Does it hallucinate when context is missing?
+```json
+"scripts": {
+  "eval": "node src/03-eval/eval.js"
+}
+```
+
+**Run:**
+
+```bash
+# Make sure you've ingested first (Phase 2)
+npm run ingest
+
+# Score retrieval hit rate against test_questions.json
+npm run eval
+# or: node src/03-eval/eval.js
+
+# Re-run after changing chunk settings
+npm run ingest -- --chunk-size 100 --overlap 0
+npm run eval
+
+# Spot-check answer faithfulness manually
+npm run query -- "What is chunk overlap?"
+```
+
+Expected: a hit-rate line like `Hit rate: 9/10`. Then manually check whether answers match retrieved chunks.
 
 **Experiments (note what breaks):**
 
@@ -428,6 +488,31 @@ while (true) {
 }
 ```
 
+**Add npm script:**
+
+```json
+"scripts": {
+  "agent": "node src/04-agent/agent.js"
+}
+```
+
+**Run:**
+
+```bash
+# Ingest docs first so search_docs has something to find
+npm run ingest
+
+# Interactive agent session
+npm run agent
+# or: node src/04-agent/agent.js
+
+# Or one-shot questions (if you add argv support)
+npm run agent -- "What is RAG?"
+npm run agent -- "What is 17 * 24?"
+```
+
+Try a doc question and a math question in the same session. Watch the console for tool-call traces (`search_docs` / `calculator`).
+
 **Failure modes to observe:**
 
 - Infinite tool loops (add a max-iterations guard)
@@ -448,14 +533,23 @@ while (true) {
 - Ollama: `llama3.2` (chat) + `nomic-embed-text` (embeddings)
 - Same JSON vector store (or swap to a real DB later)
 
-**Ollama setup:**
+**Run:**
 
 ```bash
+# 1. Start Ollama and pull models
+ollama serve   # if not already running
 ollama pull llama3.2
 ollama pull nomic-embed-text
-```
 
-Leave `OPENAI_API_KEY` unset — `config.js` routes to `http://localhost:11434/v1`.
+# 2. Use local models — leave OPENAI_API_KEY unset (or comment it out in .env)
+# config.js routes to http://localhost:11434/v1
+
+# 3. Re-ingest + query with local embeddings/chat
+npm run smoke
+npm run ingest
+npm run query -- "What is chunk overlap?"
+npm run eval
+```
 
 **Compare and note:**
 
@@ -485,6 +579,7 @@ Leave `OPENAI_API_KEY` unset — `config.js` routes to `http://localhost:11434/v
 {
   "type": "module",
   "scripts": {
+    "smoke": "node src/smoke-test.js",
     "chat": "node src/01-chat-client/chat.js",
     "ingest": "node src/02-rag/ingest.js",
     "query": "node src/02-rag/query.js",
