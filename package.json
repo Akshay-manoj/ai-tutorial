@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "smoke": "node src/smoke-test.js",
-    "chat": "node src/01-chat-client/chat.js"
+    "chat": "node src/01-chat-client/chat.js",
+    "ingest": "node src/02-rag/ingest.js",
+    "query": "node src/02-rag/query.js"
   },
   "repository": {
     "type": "git",
