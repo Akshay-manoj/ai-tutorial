@@ -9,13 +9,14 @@ const rl = readline.createInterface({ input, output });
 
 const userQuestion = process.argv.slice(2).join(" ");
 const messages = [
-    { role: "system", content: "You are a helpful assistant." },
+    { role: "system", content: "You have access to tools to search private documents and do math. If the user asks a general knowledge question, you may answer from your own internal knowledge. If you search the documents and the answer is not there, explicitly state that it isn't in the documents, but provide the answer from your own knowledge if you know it." },
     { role: "user", content: userQuestion }
 ];
 
 const client = getClient();
 const embedClient = getClient("embed");
 const store = new VectorStore();
+await store.load();
 
 const tools = [
     {
@@ -56,8 +57,15 @@ async function search_docs(args) {
 
     const results = store.search(vec, 3); // get top 3 chunks
 
-    const context = results.map(r => r.text).join('\n');
-    return context;
+    // Map to the full response but omit the massive embedding arrays
+    const cleanedResults = results.map(r => ({
+        score: r.score,
+        source: r.chunk.source,
+        text: r.chunk.text
+    }));
+
+    console.log(JSON.stringify(cleanedResults, null, 2), 'context');
+    return JSON.stringify(cleanedResults);
 }
 
 async function calculator(expression) {
@@ -86,6 +94,9 @@ while (true) {
         for (const toolCall of msg.tool_calls) {
             const args = JSON.parse(toolCall.function.arguments);
             const result = await executeTool(toolCall.function.name, args);
+
+            console.log("\n[Debug] Successfully got result from tool, sending back to LLM...");
+
             messages.push({
                 role: "tool",
                 tool_call_id: toolCall.id,
