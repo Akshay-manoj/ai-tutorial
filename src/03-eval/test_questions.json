@@ -1,0 +1,402 @@
+[
+  {
+    "question": "What is chunk overlap?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is RAG?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What are the two main phases of a RAG pipeline?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What happens during the ingestion phase of RAG?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What happens during the query phase of RAG?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "Why is chunking necessary before embedding?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What are typical chunk size values?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "How does chunk overlap prevent missed facts?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is an embedding in the context of RAG?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "How many dimensions does text-embedding-3-small produce?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is the difference between a chat model and an embedding model?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "Why use RAG instead of fine-tuning?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What failure mode occurs when chunk size is too large?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What failure mode occurs when chunk size is too small?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What happens when the vector store is stale?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What does top-K too low cause in RAG retrieval?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What happens if query and documents are embedded with different models?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "How does RAG make LLM answers citable?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What types of source documents can RAG ingest?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What similarity measure is used in RAG retrieval?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is chunkSize=500 and overlap=50 doing?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is an example of an embedding model?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "How does RAG keep knowledge up to date?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is the token limit for text-embedding-3-small?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is stored in the vector store during ingestion?",
+    "expected_source": "rag_basics.md"
+  },
+  {
+    "question": "What is cosine similarity?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What value does cosine similarity return for identical vectors?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does a cosine similarity of 0.0 mean?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does a cosine similarity of -1.0 mean?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What is the formula for cosine similarity?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What similarity range is typical for related texts with modern embedding models?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What is top-K retrieval?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What is a brute-force or linear scan in vector search?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What algorithms are used for large-scale approximate nearest-neighbor search?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What is a typical top_k value for good balance of context and prompt size?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does top_k=1 mean for retrieval?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does a JSON vector store look like?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What operations does a vector store support?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does the search() method in a vector store do?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does the save() operation on a vector store do?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What causes low cosine scores across all retrieved chunks?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does it mean when all top chunks come from the same document?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What is a high score but wrong answer failure mode?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does cosine similarity of 0.75 mean exactly?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What happens if you ingest with one embedding model and query with another?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What is a vector in the context of text embeddings?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "How do semantically similar texts relate in vector space?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What databases are similar to a raw JSON vector store?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does the load() operation on a vector store do?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "What does top_k=5 trade off compared to top_k=3?",
+    "expected_source": "vector_search.md"
+  },
+  {
+    "question": "How does the chat completion API work?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "Is the chat completion API stateful or stateless?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is the role of a system message?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is the role of a user message?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is the role of an assistant message?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "Where does the system message appear in the messages array?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "Why must you append assistant messages to history?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What does a 3-turn conversation messages array look like?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is streaming in the context of LLM APIs?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "How do you enable streaming in the OpenAI SDK?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What does each streaming chunk contain?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "Why does streaming improve perceived latency?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is temperature in an LLM?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What temperature should you use for factual RAG answers?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What does temperature=0.7 produce?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What does temperature=2.0 produce?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is the context window of an LLM?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What does the context window include?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What strategies exist for managing context window limits?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is multi-turn chat history?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What happens if you use high temperature in a RAG pipeline?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "How do you iterate over a streaming response in JavaScript?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is choices[0].delta.content in a streaming chunk?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What is a good temperature for brainstorming?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "How does the server know what the model said in previous turns?",
+    "expected_source": "llm_chat_basics.md"
+  },
+  {
+    "question": "What was rule-based AI characterized by?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is an example of a rule-based AI application?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "When did machine learning become prominent?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are examples of machine learning algorithms?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are applications of machine learning?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is deep learning used for?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What neural network architectures are used in deep learning?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are foundation models?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are examples of foundation models?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What capabilities do foundation models have?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are the benefits of RAG according to the AI overview?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What can modern AI agents do?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What components does an AI agent consist of?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What modalities can today's AI process?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are common open-source embedding models?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is the typical embedding workflow?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What does the modern AI stack consist of?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are the emerging trends in AI?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are the main challenges in modern AI?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What are examples of vector databases in the modern AI stack?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is multimodal AI?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is agentic AI?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What enables visual question answering?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is the role of observability tools like Langfuse in the AI stack?",
+    "expected_source": "sample.md"
+  },
+  {
+    "question": "What is the conclusion about the newest evolution of AI?",
+    "expected_source": "sample.md"
+  }
+]
