@@ -3,7 +3,6 @@ import { stdin as input, stdout as output } from "node:process";
 import { getClient } from "../client.js";
 import { chatModel, embedModel } from "../config.js";
 import { VectorStore } from "../02-rag/vectorStore.js";
-import { callbackify } from "node:util";
 
 const rl = readline.createInterface({ input, output });
 
@@ -64,7 +63,7 @@ async function search_docs(args) {
         text: r.chunk.text
     }));
 
-    console.log(JSON.stringify(cleanedResults, null, 2), 'context');
+    // console.log(JSON.stringify(cleanedResults, null, 2), 'context');
     return JSON.stringify(cleanedResults);
 }
 

@@ -7,7 +7,9 @@
     "smoke": "node src/smoke-test.js",
     "chat": "node src/01-chat-client/chat.js",
     "ingest": "node src/02-rag/ingest.js",
-    "query": "node src/02-rag/query.js"
+    "query": "node src/02-rag/query.js",
+    "agent:tool": "node src/04-agent/agent.js",
+    "agent:memory": "node src/06-multi-turn-memory-agent/agent.js"
   },
   "repository": {
     "type": "git",

@@ -16,6 +16,16 @@ Build this yourself, one phase at a time. Each phase has a clear goal, folder la
 | 3 | RAG evaluation | ~1 day | Phase 2 |
 | 4 | Tool-calling agent | ~1–2 days | Phase 2 |
 | 5 | Local-only stack (optional) | ~1 day | Phase 2 |
+| 6 | Multi-turn Memory Agent | ~half day | Phase 4 |
+| 7 | Real Vector Database | ~1 day | Phase 2 |
+| 8 | Document Parsing | ~1 day | Phase 2 |
+| 9 | Advanced Chunking | ~1–2 days | Phase 2 |
+| 10 | Reranking | ~1 day | Phase 2 |
+| 11 | Structured Output | ~1 day | Phase 4 |
+| 12 | Hybrid Search | ~1–2 days | Phase 7 |
+| 13 | Agentic RAG | ~2 days | Phase 11 |
+| 14 | Web Interface | ~2 days | Phase 13 |
+| 15 | Deployment | ~1 day | Phase 14 |
 
 
 ---
@@ -561,15 +571,171 @@ npm run eval
 
 ---
 
-## Suggested Build Order (Weekend Plan)
+## Phase 6 — Multi-turn Memory Agent
+
+**Goal:** Upgrade the Phase 4 agent to remember conversation history using a rolling buffer.
+
+**Build:** `src/06-memory-agent/agent.js`
+
+**Concepts to implement:**
+1. **Persistent Memory:** Move the `messages` array OUTSIDE the `while(true)` agent loop so it survives across multiple user inputs.
+2. **Context Truncation:** If `messages.length > 20`, delete the oldest user/assistant pairs to prevent context window overflow (but preserve the system prompt at index 0).
+3. **Run Loop:** Use `readline` to continually prompt the user for input.
+
+**Add npm script:**
+```json
+"scripts": {
+  "agent:memory": "node src/06-memory-agent/agent.js"
+}
+```
+
+**Done when:** You ask "What is 10 * 5?", the agent uses the calculator tool to answer 50. You then ask "Multiply that by 2", and it correctly answers 100 without forgetting the previous step.
+
+---
+
+## Phase 7 — Real Vector Database
+
+**Goal:** Replace the JSON vector store with a production DB like ChromaDB.
+
+**Build:** `src/07-vectordb/`
+
+**Steps:**
+1. Run ChromaDB locally via Docker: `docker run -p 8000:8000 chromadb/chroma`
+2. Install the client: `npm install chromadb`
+3. Refactor `vectorStore.js` to use the ChromaDB client instead of `fs.writeFile`. You will need to create a "collection", then use `collection.add()` and `collection.query()`.
+
+**Done when:** You can ingest documents and query them, and restarting your Node script doesn't lose the data because it's safely stored in the ChromaDB container.
+
+---
+
+## Phase 8 — Document Parsing
+
+**Goal:** Ingest complex documents like PDFs.
+
+**Build:** `src/08-parsing/ingest.js`
+
+**Steps:**
+1. Install a parser: `npm install pdf-parse`
+2. Update your ingestion loop. If a file ends in `.pdf`, use the parser to extract the raw text before passing it to your `chunkText` function.
+3. Save the source page numbers in the chunk metadata if possible.
+
+**Done when:** You drop a 10-page PDF into `sample_docs/`, run ingest, and can successfully query information from it.
+
+---
+
+## Phase 9 — Advanced Chunking
+
+**Goal:** Implement semantic and Markdown-aware chunking.
+
+**Build:** `src/09-chunking/chunker.js`
+
+**The Problem:** Fixed-size chunking (e.g., 500 chars) often cuts sentences in half, destroying meaning.
+**The Fix:** Write a new chunking function that splits by double-newlines `\n\n` (paragraphs) or uses a library like LangChain's `RecursiveCharacterTextSplitter` to keep logical blocks together.
+
+**Done when:** Your retrieved chunks always contain complete sentences and logical thoughts.
+
+---
+
+## Phase 10 — Reranking
+
+**Goal:** Use a Cross-Encoder model to re-score the top 20 results for higher accuracy.
+
+**Build:** `src/10-reranking/query.js`
+
+**The Problem:** Standard vector similarity (Bi-Encoder) is fast but sometimes misses nuances.
+**The Fix:** 
+1. Use ChromaDB to retrieve `topK = 20` chunks (fast search).
+2. Pass the question and all 20 chunks to a Cross-Encoder model (you can use an API or local HuggingFace model).
+3. The Cross-Encoder scores how relevant each chunk is to the query. Sort by this new score and return the top 3.
+
+**Done when:** Queries that previously failed to find the right chunk now succeed because the reranker catches the semantic nuance.
+
+---
+
+## Phase 11 — Structured Output & Metadata
+
+**Goal:** Extract metadata during ingestion to enable pre-filtering.
+
+**Build:** `src/11-metadata/ingest.js`
+
+**Steps:**
+1. Before chunking a document, pass the full text to the LLM.
+2. Ask the LLM to output JSON (e.g., `response_format: { type: "json_object" }`) containing the document's `author`, `date`, and `category`.
+3. Save this metadata into your Vector DB alongside the embeddings.
+4. When querying, allow the user to filter (e.g., "Only search documents from 2024").
+
+**Done when:** You can ask "What did Akshay say about RAG?" and the database pre-filters chunks to only include those where `author: "Akshay"`.
+
+---
+
+## Phase 12 — Hybrid Search
+
+**Goal:** Combine dense vector search with sparse keyword search (BM25).
+
+**Build:** `src/12-hybrid-search/query.js`
+
+**The Problem:** Vector search is bad at exact keyword matches (like finding a specific ID number or error code).
+**The Fix:** Implement BM25 (keyword search) alongside your vector search. Combine the scores using Reciprocal Rank Fusion (RRF).
+
+**Done when:** Searching for exact serial numbers or error codes works flawlessly, while semantic questions also still work.
+
+---
+
+## Phase 13 — Agentic RAG (Query Planning)
+
+**Goal:** Teach the agent to break down complex questions into sub-queries.
+
+**Build:** `src/13-agentic-rag/agent.js`
+
+**Steps:**
+1. When a user asks "Compare the revenue of Apple and Microsoft", a normal RAG might fail to retrieve info for both.
+2. Give the agent a tool called `plan_queries`. The agent generates two sub-queries: "Apple revenue" and "Microsoft revenue".
+3. Execute both searches in parallel, then feed all results back to the agent to synthesize a final answer.
+
+**Done when:** The agent can successfully answer comparative questions by making multiple independent searches.
+
+---
+
+## Phase 14 — Web Interface
+
+**Goal:** Build a streaming HTML/Vanilla JS frontend.
+
+**Build:** `frontend/index.html` & `src/14-api/server.js`
+
+**Steps:**
+1. Remove `readline`. Wrap your agent code in an Express.js or Fastify server.
+2. Create an endpoint `POST /chat`.
+3. Build a simple HTML/CSS frontend with a chat window.
+4. Use Server-Sent Events (SSE) to stream the LLM's response to the frontend token-by-token.
+
+**Done when:** You have a working web chat UI that looks and feels like ChatGPT.
+
+---
+
+## Phase 15 — Deployment
+
+**Goal:** Containerize the application for production.
+
+**Build:** `Dockerfile` & `docker-compose.yml`
+
+**Steps:**
+1. Write a `Dockerfile` for your Node.js application.
+2. Write a `docker-compose.yml` that spins up your Node app alongside your ChromaDB container.
+3. Use environment variables to link them together.
+
+**Done when:** You can run `docker-compose up` on a fresh machine and have the entire AI application stack running immediately.
+
+---
+
+## Suggested Build Order (Advanced Plan)
 
 | When | Phase |
 |------|-------|
-| Day 1 morning | Phase 0 + Phase 1 |
-| Day 1 afternoon – Day 2 | Phase 2 (chunk → embed → store → query) |
-| Day 3 | Phase 3 (eval + experiments) |
-| Day 4–5 | Phase 4 (agent) |
-| Optional | Phase 5 if you care about local/privacy |
+| Week 1 | Phases 0–5 (Foundations) |
+| Week 2 | Phases 6, 7, 8 (Memory & Data) |
+| Week 3 | Phases 9, 10, 11 (Search Quality) |
+| Week 4 | Phases 12, 13 (Advanced Architecture) |
+| Week 5 | Phases 14, 15 (Production) |
 
 ---
 
@@ -599,10 +765,8 @@ Optional dev deps: `minimist` (CLI flags), `glob` (file globbing), `mathjs` (saf
 
 ## What to Skip for Now
 
-- Fine-tuning / training models
-- LangChain.js / LlamaIndex (build raw first, then compare)
-- Production concerns: auth, scaling, monitoring
-- PDF parsing (add later with `pdf-parse` once markdown flow works)
+- Fine-tuning / training models (rarely needed for RAG)
+- Complex agent frameworks like AutoGen or CrewAI (build raw first)
 
 ---
 
@@ -614,3 +778,6 @@ After each phase, you should be able to explain without looking at code:
 2. **Phase 2:** What happens if chunk size is too large? Too small?
 3. **Phase 3:** What's the difference between retrieval hit rate and answer faithfulness?
 4. **Phase 4:** When should the agent call a tool vs answer directly?
+5. **Phase 7:** Why use a real vector database over a JSON file?
+6. **Phase 10:** What is the difference between a Bi-Encoder (standard embeddings) and a Cross-Encoder (reranker)?
+7. **Phase 12:** When does keyword search (BM25) beat vector search?
